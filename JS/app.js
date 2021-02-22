@@ -1,6 +1,9 @@
 'use Strict'
 
 let allItemsImages = [];
+let productsName = [];  // add name of images to the chart
+let shownArr = [];  // add number of shown to the chart
+let clicksArr = []; // add number of clicks to the chart
 let FirstImage = document.getElementById('First');
 let SecondImage = document.getElementById('Second');
 let ThirdImage = document.getElementById('Third');
@@ -16,6 +19,9 @@ let TotalClicks = 0;
 let FirstImageIndex;
 let SecondImageIndex;
 let ThirdImageIndex;
+let FirstImageIndexPrevious = -1;
+let SecondImageIndexPrevious = -1;
+let ThirdImageIndexPrevious = -1;
 
 function ItemImages(name,source) {
     this.name = name;
@@ -23,6 +29,7 @@ function ItemImages(name,source) {
     this.imagesClicks = 0;
     this.ImagesShown = 0;
 
+    productsName.push(name);
     allItemsImages.push(this);
 }
 
@@ -54,14 +61,30 @@ function randomGenerator() {
 }
 
 function renderThreeRandomImages() {
-    do {
-        FirstImageIndex = randomGenerator();
-        SecondImageIndex = randomGenerator();
-        ThirdImageIndex = randomGenerator();
-    }
+    let NonAllowed = [FirstImageIndexPrevious, SecondImageIndexPrevious, ThirdImageIndexPrevious];
 
-    while (FirstImageIndex === SecondImageIndex || FirstImageIndex === ThirdImageIndex || SecondImageIndex === ThirdImageIndex)
-    {
+    do{
+    FirstImageIndex = randomGenerator();
+    }
+    while(NonAllowed.includes(FirstImageIndex));
+
+    FirstImageIndexPrevious = FirstImageIndex;
+    NonAllowed.push(FirstImageIndex);
+
+    do{
+    SecondImageIndex = randomGenerator();
+    }
+    while(NonAllowed.includes(SecondImageIndex))
+    
+    SecondImageIndexPrevious = SecondImageIndex;
+    NonAllowed.push(SecondImageIndex);
+
+    do{
+    ThirdImageIndex = randomGenerator();
+    } 
+    while(NonAllowed.includes(ThirdImageIndex))
+    ThirdImageIndexPrevious = ThirdImageIndex;
+
         allItemsImages[FirstImageIndex].ImagesShown++;
         FirstImage.src = allItemsImages[FirstImageIndex].source;
         allItemsImages[SecondImageIndex].ImagesShown++;
@@ -69,7 +92,7 @@ function renderThreeRandomImages() {
         allItemsImages[ThirdImageIndex].ImagesShown++;
         ThirdImage.src = allItemsImages[ThirdImageIndex].source;
     }
-}
+
 renderThreeRandomImages();
 
 function handleUserClick(event) {
@@ -113,10 +136,55 @@ function GoalResult() {
         ul.appendChild(goalResult);
     }
     ResultItemsList.appendChild(ul);
-
+    chartRender();
     FirstImage.removeEventListener('click', handleUserClick);
     SecondImage.removeEventListener('click', handleUserClick);
     ThirdImage.removeEventListener('click', handleUserClick);
 
     ResultButton.disabled = true;
 }
+
+
+// letshownArr = [];
+// clicksArr = [];
+ 
+
+function chartRender(){
+    for (let i = 0; i < allItemsImages.length; i++) {
+
+        productsName.push(allItemsImages[i].name);
+        shownArr.push(allItemsImages[i].ImagesShown);
+        clicksArr.push(allItemsImages[i].imagesClicks);
+      }
+      console.log(clicksArr);
+console.log(shownArr);
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+    
+        // The data for our dataset
+        data: {
+            labels: productsName,
+            datasets: [{
+                label: 'Images Clicked',
+                backgroundColor: '#e36bae',
+                borderColor: 'rgb(255, 99, 132)',
+                data: clicksArr,
+            },{
+                label: 'Images Shown',
+                backgroundColor: '#f1d1d0',
+                borderColor:'rgb(155,100,30)',
+                data: shownArr,
+    
+            }]
+        },
+    
+        // Configuration options go here
+        options: {}
+    });
+    
+    // console.log(chart);
+    }
+console.log(clicksArr);
+console.log(shownArr);
