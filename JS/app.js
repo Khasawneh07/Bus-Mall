@@ -95,6 +95,7 @@ function renderThreeRandomImages() {
 
 renderThreeRandomImages();
 
+
 function handleUserClick(event) {
     
     if (TotalClicks < DefaultRoundsNumber) {
@@ -117,7 +118,7 @@ function handleUserClick(event) {
     else {
         ItemsImagesDiv.removeEventListener('click', handleUserClick);
         ResultButton.disabled = false;
-        
+        saveData();
     }
 }
 
@@ -143,6 +144,7 @@ function GoalResult() {
 
     ResultButton.disabled = true;
 }
+getData();
 
 
 // letshownArr = [];
@@ -188,3 +190,19 @@ console.log(shownArr);
     }
 console.log(clicksArr);
 console.log(shownArr);
+
+function saveData(){
+    let userInput = JSON.stringify(allItemsImages);
+    localStorage.setItem('userClickes',userInput);
+}
+function getData(){
+    let storeInput = localStorage.getItem('userClickes');
+    userOutput = JSON.parse(storeInput);
+
+    if (userOutput !== null){
+
+    allItemsImages = userOutput;
+        
+  }
+   
+}
